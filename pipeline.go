@@ -1,31 +1,36 @@
 package main
 
 type pipeline struct {
-	stages []stage
-	ctx    *pContext
+	steps []step
+	doc   *document
 }
 
-type pContext struct {
+type document struct {
 	fileName string
 	content  string
+	tokens   []string
 }
 
-func (p *pipeline) run() {
-	for i := 0; i < len(p.stages); i++ {
-		p.stages[i]()
-	}
-}
-
-type stage func()
+type step func(*document) error
 
 func newPipeline() *pipeline {
 	return &pipeline{
-		stages: make([]stage, 0),
-		ctx:    &pContext{},
+		steps: make([]step, 0),
+		doc:   &document{},
 	}
 }
 
-func (p *pipeline) then(s stage) *pipeline {
-	p.stages = append(p.stages, s)
+func (p *pipeline) then(s step) *pipeline {
+	p.steps = append(p.steps, s)
 	return p
+}
+
+func (p *pipeline) run() error {
+	for _, s := range p.steps {
+		if err := s(p.doc); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

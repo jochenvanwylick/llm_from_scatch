@@ -1,0 +1,9 @@
+[project]
+name = "llm-from-scatch"
+version = "0.1.0"
+description = "Repo to practice the book 'Build a large language model from scratch'"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "rich>=15.0.0",
+]
